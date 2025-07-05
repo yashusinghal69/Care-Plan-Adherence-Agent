@@ -2,10 +2,7 @@
 
 A multi-agent healthcare automation platform built with Langflow and React. It streamlines patient registration, automates care plan adherence tracking, intelligently schedules daily tasks, and integrates structured patient data into EHR systems.
 
----
-
-## 🚀 Live Demo
-**🌐 Deployed Agent UI:** [Care Plan Adherence Agent](https://your-deployed-app-url.com)
+### **🌐 Deployed Agent UI:** [Care Plan Adherence Agent](https://your-deployed-app-url.com)
 ---
 
 
