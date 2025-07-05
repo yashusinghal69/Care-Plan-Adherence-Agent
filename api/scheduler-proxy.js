@@ -14,8 +14,8 @@ export default async function handler(req, res) {
     }
 
     // Get the scheduler flow ID from environment
-    const schedulerId = process.env.VITE_LANGFLOW_FLOW_SCHEDULAR_ID;
-    
+    const schedulerId = process.env.VITE_LANGFLOW_FLOW_SCHEDULER_ID;
+
     if (!schedulerId) {
       return res.status(500).json({ error: 'Scheduler ID not configured' });
     }
