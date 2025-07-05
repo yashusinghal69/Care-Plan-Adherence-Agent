@@ -38,7 +38,7 @@ export function ScheduleManagement() {
       const mergedInput = `${patientId} ${patientName}`;
 
       // API Call to generate schedule
-      const response = await fetch(`/api/scheduler-proxy'`, {
+      const response = await fetch(`/api/scheduler-proxy`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
