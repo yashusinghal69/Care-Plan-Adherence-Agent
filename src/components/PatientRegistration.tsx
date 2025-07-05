@@ -104,8 +104,8 @@ export function PatientRegistration() {
         }
       };
 
-      // API Call to localhost:7860
-      const response = await fetch(`${import.meta.env.VITE_BASE_DEPLOYED_URL}/run/${import.meta.env.VITE_LANGFLOW_REGISTRATION_ID}`, {
+ 
+      const response = await fetch(`/api/registration-proxy`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

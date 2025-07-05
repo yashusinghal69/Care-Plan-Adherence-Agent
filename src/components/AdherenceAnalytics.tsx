@@ -36,7 +36,7 @@ export function AdherenceAnalytics() {
       const mergedInput = `${patientId} ${patientName}`;
 
       // API Call to adherence analytics endpoint
-      const response = await fetch(`${import.meta.env.VITE_BASE_DEPLOYED_URL}/run/${import.meta.env.VITE_LANGFLOW_FLOW_ADHERENCE_ID}`, {
+      const response = await fetch(`/api/adherence-proxy`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

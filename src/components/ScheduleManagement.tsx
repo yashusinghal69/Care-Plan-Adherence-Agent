@@ -38,7 +38,7 @@ export function ScheduleManagement() {
       const mergedInput = `${patientId} ${patientName}`;
 
       // API Call to generate schedule
-      const response = await fetch(`${import.meta.env.VITE_BASE_DEPLOYED_URL}/run/${import.meta.env.VITE_LANGFLOW_FLOW_SCHEDULAR_ID}`, {
+      const response = await fetch(`/api/scheduler-proxy'`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
