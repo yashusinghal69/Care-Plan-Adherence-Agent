@@ -129,7 +129,7 @@ export function PatientRegistration() {
       };
 
       const response = await fetch(
-        `http://localhost:3001/api/registration-proxy`,
+        `/api/registration-proxy`,
         {
           method: "POST",
           headers: {
