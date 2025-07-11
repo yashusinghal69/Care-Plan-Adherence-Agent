@@ -10,7 +10,8 @@
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "postbuild": "rm -rf public/agents/patient-care-agent && mkdir -p public/agents/patient-care-agent && cp -r dist/* public/agents/patient-care-agent/"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
