@@ -1,9 +1,22 @@
 import { useState } from "react";
-import { Calendar, Search, Clock, CheckCircle, AlertCircle, User } from "lucide-react";
+import {
+  Calendar,
+  Search,
+  Clock,
+  CheckCircle,
+  AlertCircle,
+  User,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { toast } from "sonner";
 
 interface ScheduleItem {
@@ -25,7 +38,7 @@ export function ScheduleManagement() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!patientId || !patientName) {
       toast.error("Please enter both Patient ID and Patient Name");
       return;
@@ -38,32 +51,39 @@ export function ScheduleManagement() {
       const mergedInput = `${patientId} ${patientName}`;
 
       // API Call to generate schedule
-      const response = await fetch(`/api/scheduler-proxy`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          input_value: mergedInput,
-          output_type: "text",
-          input_type: "text"
-        })
-      });
+      const response = await fetch(
+        `http://localhost:3001/api/scheduler-proxy`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            input_value: mergedInput,
+            output_type: "text",
+            input_type: "text",
+          }),
+        }
+      );
 
       if (response.ok) {
         const result = await response.json();
-        
+
         // Parse the nested response structure
-        const responseText = result.outputs?.[0]?.outputs?.[0]?.results?.message?.data?.text;
-        
+        const responseText =
+          result.outputs?.[0]?.outputs?.[0]?.results?.message?.data?.text;
+
         if (responseText) {
           const parsedData = JSON.parse(responseText);
           setScheduleData(parsedData);
-          
-          toast.success("📅 Tasks successfully scheduled for Google Calendar!", {
-            description: `Schedule created for ${parsedData.name}`,
-            duration: 4000
-          });
+
+          toast.success(
+            "📅 Tasks successfully scheduled for Google Calendar!",
+            {
+              description: `Schedule created for ${parsedData.name}`,
+              duration: 4000,
+            }
+          );
         } else {
           throw new Error("Invalid response format");
         }
@@ -93,8 +113,12 @@ export function ScheduleManagement() {
             <Calendar className="h-6 w-6 text-accent" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Schedule Management Center</h1>
-            <p className="text-muted-foreground">Generate and manage patient care schedules</p>
+            <h1 className="text-2xl font-bold text-foreground">
+              Schedule Management Center
+            </h1>
+            <p className="text-muted-foreground">
+              Generate and manage patient care schedules
+            </p>
           </div>
         </div>
       </div>
@@ -106,7 +130,9 @@ export function ScheduleManagement() {
             <Search className="h-5 w-5 text-primary" />
             Patient Lookup
           </CardTitle>
-          <CardDescription>Enter patient details to generate their care schedule</CardDescription>
+          <CardDescription>
+            Enter patient details to generate their care schedule
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -134,7 +160,7 @@ export function ScheduleManagement() {
                 />
               </div>
             </div>
-            
+
             <div className="flex gap-3 pt-4">
               <Button
                 type="submit"
@@ -153,7 +179,7 @@ export function ScheduleManagement() {
                   </>
                 )}
               </Button>
-              
+
               {scheduleData && (
                 <Button
                   type="button"
@@ -175,7 +201,8 @@ export function ScheduleManagement() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <CheckCircle className="h-5 w-5 text-success" />
-              📅 Tasks Successfully Scheduled for {scheduleData.name}'s Google Calendar
+              📅 Tasks Successfully Scheduled for {scheduleData.name}'s Google
+              Calendar
             </CardTitle>
             <CardDescription>
               Daily care reminders have been created and synchronized
@@ -192,8 +219,12 @@ export function ScheduleManagement() {
                     <Clock className="h-4 w-4 text-accent" />
                   </div>
                   <div className="flex-1">
-                    <div className="font-medium text-foreground">{reminder.time}</div>
-                    <div className="text-sm text-muted-foreground">{reminder.task}</div>
+                    <div className="font-medium text-foreground">
+                      {reminder.time}
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      {reminder.task}
+                    </div>
                   </div>
                   <div className="p-2 bg-success/10 rounded-lg">
                     <CheckCircle className="h-4 w-4 text-success" />
@@ -209,10 +240,26 @@ export function ScheduleManagement() {
                 <span className="font-medium">Schedule Summary</span>
               </div>
               <div className="text-sm text-muted-foreground">
-                <p>• Patient ID: <span className="font-mono text-foreground">{scheduleData.patient_id}</span></p>
-                <p>• Total Reminders: <span className="font-medium text-foreground">{scheduleData.daily_reminders.length}</span></p>
-                <p>• Calendar Integration: <span className="text-success font-medium">Active</span></p>
-                <p>• Notification Status: <span className="text-success font-medium">Enabled</span></p>
+                <p>
+                  • Patient ID:{" "}
+                  <span className="font-mono text-foreground">
+                    {scheduleData.patient_id}
+                  </span>
+                </p>
+                <p>
+                  • Total Reminders:{" "}
+                  <span className="font-medium text-foreground">
+                    {scheduleData.daily_reminders.length}
+                  </span>
+                </p>
+                <p>
+                  • Calendar Integration:{" "}
+                  <span className="text-success font-medium">Active</span>
+                </p>
+                <p>
+                  • Notification Status:{" "}
+                  <span className="text-success font-medium">Enabled</span>
+                </p>
               </div>
             </div>
           </CardContent>
@@ -228,7 +275,9 @@ export function ScheduleManagement() {
                 <AlertCircle className="h-8 w-8 text-muted-foreground" />
               </div>
               <div>
-                <h3 className="font-medium text-foreground mb-2">How to Generate a Schedule</h3>
+                <h3 className="font-medium text-foreground mb-2">
+                  How to Generate a Schedule
+                </h3>
                 <div className="text-sm text-muted-foreground space-y-1">
                   <p>1. Enter the patient's ID (e.g., p_1001)</p>
                   <p>2. Enter the patient's full name</p>

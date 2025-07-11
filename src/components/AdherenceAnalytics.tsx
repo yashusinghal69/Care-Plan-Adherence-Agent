@@ -36,7 +36,7 @@ export function AdherenceAnalytics() {
       const mergedInput = `${patientId} ${patientName}`;
 
       // API Call to adherence analytics endpoint
-      const response = await fetch(`/api/adherence-proxy`, {
+      const response = await fetch(`http://localhost:3001/api/adherence-proxy`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

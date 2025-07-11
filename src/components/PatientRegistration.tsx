@@ -1,9 +1,23 @@
 import { useState } from "react";
-import { UserPlus, Plus, X, Clock, Pill, Activity, CheckCircle } from "lucide-react";
+import {
+  UserPlus,
+  Plus,
+  X,
+  Clock,
+  Pill,
+  Activity,
+  CheckCircle,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { toast } from "sonner";
 
 interface Medication {
@@ -29,14 +43,16 @@ interface PatientData {
 }
 
 export function PatientRegistration() {
-  const [patientId, setPatientId] = useState(`p_${Math.floor(Math.random() * 9000) + 1000}`);
+  const [patientId, setPatientId] = useState(
+    `p_${Math.floor(Math.random() * 9000) + 1000}`
+  );
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
   const [medications, setMedications] = useState<Medication[]>([
-    { name: "", dosage: "", frequency: "" }
+    { name: "", dosage: "", frequency: "" },
   ]);
   const [exercises, setExercises] = useState<Exercise[]>([
-    { type: "", duration: "", timing: "" }
+    { type: "", duration: "", timing: "" },
   ]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -50,8 +66,12 @@ export function PatientRegistration() {
     setMedications(medications.filter((_, i) => i !== index));
   };
 
-  const updateMedication = (index: number, field: keyof Medication, value: string) => {
-    const updated = medications.map((med, i) => 
+  const updateMedication = (
+    index: number,
+    field: keyof Medication,
+    value: string
+  ) => {
+    const updated = medications.map((med, i) =>
       i === index ? { ...med, [field]: value } : med
     );
     setMedications(updated);
@@ -67,8 +87,12 @@ export function PatientRegistration() {
     setExercises(exercises.filter((_, i) => i !== index));
   };
 
-  const updateExercise = (index: number, field: keyof Exercise, value: string) => {
-    const updated = exercises.map((ex, i) => 
+  const updateExercise = (
+    index: number,
+    field: keyof Exercise,
+    value: string
+  ) => {
+    const updated = exercises.map((ex, i) =>
       i === index ? { ...ex, [field]: value } : ex
     );
     setExercises(updated);
@@ -76,7 +100,7 @@ export function PatientRegistration() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!name || !age) {
       toast.error("Please fill in all required patient information");
       return;
@@ -87,12 +111,12 @@ export function PatientRegistration() {
     try {
       // Format data according to API specification
       const formattedMedications = medications
-        .filter(med => med.name && med.dosage && med.frequency)
-        .map(med => `${med.name} ${med.dosage} - ${med.frequency}`);
-      
+        .filter((med) => med.name && med.dosage && med.frequency)
+        .map((med) => `${med.name} ${med.dosage} - ${med.frequency}`);
+
       const formattedExercises = exercises
-        .filter(ex => ex.type && ex.duration && ex.timing)
-        .map(ex => `${ex.type} - ${ex.duration} in ${ex.timing}`);
+        .filter((ex) => ex.type && ex.duration && ex.timing)
+        .map((ex) => `${ex.type} - ${ex.duration} in ${ex.timing}`);
 
       const patientData: PatientData = {
         patient_id: patientId,
@@ -100,29 +124,34 @@ export function PatientRegistration() {
         age: parseInt(age),
         care_plan: {
           medications: formattedMedications,
-          exercises: formattedExercises
-        }
+          exercises: formattedExercises,
+        },
       };
 
- 
-      const response = await fetch(`/api/registration-proxy`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          input_value: JSON.stringify(patientData),
-          output_type: "chat",
-          input_type: "text"
-        })
-      });
+      const response = await fetch(
+        `http://localhost:3001/api/registration-proxy`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            input_value: JSON.stringify(patientData),
+            output_type: "chat",
+            input_type: "text",
+          }),
+        }
+      );
 
       if (response.ok) {
-        toast.success("Patient registered successfully! Care plan has been created.", {
-          description: `Patient ID: ${patientId}`,
-          duration: 4000
-        });
-        
+        toast.success(
+          "Patient registered successfully! Care plan has been created.",
+          {
+            description: `Patient ID: ${patientId}`,
+            duration: 4000,
+          }
+        );
+
         // Reset form
         setPatientId(`p_${Math.floor(Math.random() * 9000) + 1000}`);
         setName("");
@@ -149,8 +178,12 @@ export function PatientRegistration() {
             <UserPlus className="h-6 w-6 text-primary" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Patient Registration Hub</h1>
-            <p className="text-muted-foreground">Register new patients and create comprehensive care plans</p>
+            <h1 className="text-2xl font-bold text-foreground">
+              Patient Registration Hub
+            </h1>
+            <p className="text-muted-foreground">
+              Register new patients and create comprehensive care plans
+            </p>
           </div>
         </div>
       </div>
@@ -163,7 +196,9 @@ export function PatientRegistration() {
               <UserPlus className="h-5 w-5 text-primary" />
               Patient Information
             </CardTitle>
-            <CardDescription>Basic patient details and identification</CardDescription>
+            <CardDescription>
+              Basic patient details and identification
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid md:grid-cols-3 gap-4">
@@ -213,17 +248,24 @@ export function PatientRegistration() {
               <Pill className="h-5 w-5 text-accent" />
               Medication Management
             </CardTitle>
-            <CardDescription>Define medication schedule and dosages</CardDescription>
+            <CardDescription>
+              Define medication schedule and dosages
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {medications.map((medication, index) => (
-              <div key={index} className="p-4 border border-border rounded-lg bg-muted/30 animate-scale-in">
+              <div
+                key={index}
+                className="p-4 border border-border rounded-lg bg-muted/30 animate-scale-in"
+              >
                 <div className="grid md:grid-cols-4 gap-4">
                   <div>
                     <Label>Medication Name</Label>
                     <Input
                       value={medication.name}
-                      onChange={(e) => updateMedication(index, "name", e.target.value)}
+                      onChange={(e) =>
+                        updateMedication(index, "name", e.target.value)
+                      }
                       className="medical-input"
                       placeholder="e.g., Atorvastatin"
                     />
@@ -232,7 +274,9 @@ export function PatientRegistration() {
                     <Label>Dosage</Label>
                     <Input
                       value={medication.dosage}
-                      onChange={(e) => updateMedication(index, "dosage", e.target.value)}
+                      onChange={(e) =>
+                        updateMedication(index, "dosage", e.target.value)
+                      }
                       className="medical-input"
                       placeholder="e.g., 10mg"
                     />
@@ -241,7 +285,9 @@ export function PatientRegistration() {
                     <Label>Frequency</Label>
                     <Input
                       value={medication.frequency}
-                      onChange={(e) => updateMedication(index, "frequency", e.target.value)}
+                      onChange={(e) =>
+                        updateMedication(index, "frequency", e.target.value)
+                      }
                       className="medical-input"
                       placeholder="e.g., once/day in evening"
                     />
@@ -282,17 +328,24 @@ export function PatientRegistration() {
               <Activity className="h-5 w-5 text-success" />
               Exercise Protocol
             </CardTitle>
-            <CardDescription>Define exercise routines and schedules</CardDescription>
+            <CardDescription>
+              Define exercise routines and schedules
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {exercises.map((exercise, index) => (
-              <div key={index} className="p-4 border border-border rounded-lg bg-muted/30 animate-scale-in">
+              <div
+                key={index}
+                className="p-4 border border-border rounded-lg bg-muted/30 animate-scale-in"
+              >
                 <div className="grid md:grid-cols-4 gap-4">
                   <div>
                     <Label>Exercise Type</Label>
                     <Input
                       value={exercise.type}
-                      onChange={(e) => updateExercise(index, "type", e.target.value)}
+                      onChange={(e) =>
+                        updateExercise(index, "type", e.target.value)
+                      }
                       className="medical-input"
                       placeholder="e.g., Jogging"
                     />
@@ -301,7 +354,9 @@ export function PatientRegistration() {
                     <Label>Duration</Label>
                     <Input
                       value={exercise.duration}
-                      onChange={(e) => updateExercise(index, "duration", e.target.value)}
+                      onChange={(e) =>
+                        updateExercise(index, "duration", e.target.value)
+                      }
                       className="medical-input"
                       placeholder="e.g., 20 mins"
                     />
@@ -310,7 +365,9 @@ export function PatientRegistration() {
                     <Label>Timing</Label>
                     <Input
                       value={exercise.timing}
-                      onChange={(e) => updateExercise(index, "timing", e.target.value)}
+                      onChange={(e) =>
+                        updateExercise(index, "timing", e.target.value)
+                      }
                       className="medical-input"
                       placeholder="e.g., morning"
                     />
