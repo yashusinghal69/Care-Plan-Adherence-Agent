@@ -27,7 +27,7 @@ const App = () => (
           },
         }}
       />
-      <BrowserRouter>
+      <BrowserRouter basename="/agents/patient-care-agent">
         <SidebarProvider>
           <div className="min-h-screen w-full bg-background">
             <div className="flex h-screen">
