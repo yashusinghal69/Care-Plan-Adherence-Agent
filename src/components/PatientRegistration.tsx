@@ -19,6 +19,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { toast } from "sonner";
+import { apiCall } from "@/lib/api";
 
 interface Medication {
   name: string;
@@ -128,26 +129,23 @@ export function PatientRegistration() {
         },
       };
 
-      const response = await fetch(
-        `/api/registration-proxy`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            input_value: JSON.stringify(patientData),
-            output_type: "chat",
-            input_type: "text",
-          }),
-        }
-      );
+      const response = await apiCall("registration-proxy", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          input_value: JSON.stringify(patientData),
+          output_type: "chat",
+          input_type: "text",
+        }),
+      });
 
-      console.log('Registration response status:', response.status);
-      
+      console.log("Registration response status:", response.status);
+
       if (response.ok) {
         const result = await response.json();
-        console.log('Registration result:', result);
+        console.log("Registration result:", result);
         toast.success(
           "Patient registered successfully! Care plan has been created.",
           {
@@ -164,8 +162,10 @@ export function PatientRegistration() {
         setExercises([{ type: "", duration: "", timing: "" }]);
       } else {
         const errorText = await response.text();
-        console.error('Registration error response:', errorText);
-        throw new Error(`Failed to register patient: ${response.status} - ${errorText}`);
+        console.error("Registration error response:", errorText);
+        throw new Error(
+          `Failed to register patient: ${response.status} - ${errorText}`
+        );
       }
     } catch (error) {
       console.error("Registration error:", error);

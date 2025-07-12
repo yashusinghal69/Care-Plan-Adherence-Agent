@@ -6,7 +6,7 @@
   },
   "rewrites": [
     {
-      "source": "/api/(.*)",
+      "source": "/agents/patient-care-agent/api/(.*)",
       "destination": "/api/$1"
     },
     {
@@ -16,6 +16,10 @@
     {
       "source": "/agents/patient-care-agent",
       "destination": "/index.html"
+    },
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
     }
   ],
   "headers": [
