@@ -4,6 +4,61 @@
 
 /* Healthcare SaaS Design System - Medical Excellence meets Modern Aesthetics */
 
+/* Prevent layout shifts and FOUC - Enhanced */
+* {
+  box-sizing: border-box;
+}
+
+/* Force immediate styling */
+html {
+  font-size: 16px;
+  line-height: 1.5;
+  height: 100%;
+  background-color: hsl(210, 20%, 98%) !important;
+}
+
+body {
+  margin: 0 !important;
+  padding: 0 !important;
+  min-height: 100vh !important;
+  height: 100%;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif !important;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  background-color: hsl(210, 20%, 98%) !important;
+  color: hsl(215, 25%, 15%) !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+#root {
+  min-height: 100vh !important;
+  height: 100%;
+  display: flex !important;
+  flex-direction: column !important;
+  width: 100% !important;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+/* Show root only when CSS is loaded */
+body.css-loaded #root {
+  opacity: 1 !important;
+}
+
+/* Ensure smooth loading */
+.app-loaded {
+  opacity: 1;
+  transition: opacity 0.3s ease-in-out;
+}
+
+/* Force background while loading */
+body:not(.css-loaded) {
+  background-color: hsl(210, 20%, 98%) !important;
+}
+
 @layer base {
   :root {
     /* Healthcare Core Colors */
@@ -51,10 +106,26 @@
     --radius: 0.75rem;
 
     /* Healthcare Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
-    --gradient-medical: linear-gradient(120deg, hsl(var(--accent)), hsl(var(--primary)));
-    --gradient-success: linear-gradient(135deg, hsl(var(--success)), hsl(145 85% 55%));
-    --gradient-warning: linear-gradient(135deg, hsl(var(--warning)), hsl(45 100% 70%));
+    --gradient-primary: linear-gradient(
+      135deg,
+      hsl(var(--primary)),
+      hsl(var(--primary-glow))
+    );
+    --gradient-medical: linear-gradient(
+      120deg,
+      hsl(var(--accent)),
+      hsl(var(--primary))
+    );
+    --gradient-success: linear-gradient(
+      135deg,
+      hsl(var(--success)),
+      hsl(145 85% 55%)
+    );
+    --gradient-warning: linear-gradient(
+      135deg,
+      hsl(var(--warning)),
+      hsl(45 100% 70%)
+    );
 
     /* Medical Shadows */
     --shadow-medical: 0 4px 20px hsl(var(--primary) / 0.15);
@@ -120,10 +191,26 @@
     --ring: 210 100% 65%;
 
     /* Dark Healthcare Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
-    --gradient-medical: linear-gradient(120deg, hsl(var(--accent)), hsl(var(--primary)));
-    --gradient-success: linear-gradient(135deg, hsl(var(--success)), hsl(145 85% 65%));
-    --gradient-warning: linear-gradient(135deg, hsl(var(--warning)), hsl(45 100% 80%));
+    --gradient-primary: linear-gradient(
+      135deg,
+      hsl(var(--primary)),
+      hsl(var(--primary-glow))
+    );
+    --gradient-medical: linear-gradient(
+      120deg,
+      hsl(var(--accent)),
+      hsl(var(--primary))
+    );
+    --gradient-success: linear-gradient(
+      135deg,
+      hsl(var(--success)),
+      hsl(145 85% 65%)
+    );
+    --gradient-warning: linear-gradient(
+      135deg,
+      hsl(var(--warning)),
+      hsl(45 100% 80%)
+    );
 
     /* Dark Medical Shadows */
     --shadow-medical: 0 4px 20px hsl(var(--primary) / 0.25);
@@ -157,7 +244,11 @@
   /* Healthcare Card Components */
   .medical-card {
     @apply bg-card border border-border rounded-xl shadow-lg backdrop-blur-sm;
-    background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--card) / 0.98) 100%);
+    background: linear-gradient(
+      135deg,
+      hsl(var(--card)) 0%,
+      hsl(var(--card) / 0.98) 100%
+    );
     box-shadow: var(--shadow-elegant);
     transition: var(--transition-smooth);
   }
@@ -215,7 +306,12 @@
   }
 
   .loading-shimmer {
-    background: linear-gradient(90deg, transparent, hsl(var(--muted)), transparent);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      hsl(var(--muted)),
+      transparent
+    );
     animation: shimmer 1.5s infinite;
   }
 
@@ -258,8 +354,12 @@
 @layer utilities {
   /* Healthcare Animations */
   @keyframes shimmer {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
   }
 
   @keyframes fadeSlideIn {
@@ -296,11 +396,13 @@
   }
 
   @keyframes pulseGlow {
-    0%, 100% {
+    0%,
+    100% {
       box-shadow: 0 0 5px hsl(var(--primary) / 0.3);
     }
     50% {
-      box-shadow: 0 0 20px hsl(var(--primary) / 0.6), 0 0 30px hsl(var(--primary) / 0.4);
+      box-shadow: 0 0 20px hsl(var(--primary) / 0.6),
+        0 0 30px hsl(var(--primary) / 0.4);
     }
   }
 

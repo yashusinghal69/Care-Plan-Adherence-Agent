@@ -4,21 +4,163 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>HealthTracker Pro - Healthcare Care Adherence Platform</title>
-    <meta name="description" content="AI-powered healthcare SaaS platform for patient care management and adherence tracking" />
+    <meta
+      name="description"
+      content="AI-powered healthcare SaaS platform for patient care management and adherence tracking"
+    />
     <meta name="author" content="HealthTracker Team" />
 
-    <meta property="og:title" content="HealthTracker Pro - Healthcare Care Adherence Platform" />
-    <meta property="og:description" content="AI-powered healthcare SaaS platform for patient care management and adherence tracking" />
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <link rel="alternate icon" href="./favicon.ico" />
+
+    <!-- Critical CSS to prevent FOUC and layout shifts -->
+    <style>
+      /* Critical styles loaded immediately */
+      html {
+        font-size: 16px;
+        line-height: 1.5;
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        background-color: hsl(210, 20%, 98%);
+        color: hsl(215, 25%, 15%);
+        font-weight: 400;
+        font-style: normal;
+        overflow-x: hidden;
+      }
+
+      #root {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+      }
+
+      /* Loading spinner to show while app loads */
+      .loading-spinner {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 40px;
+        height: 40px;
+        border: 4px solid hsl(210, 20%, 90%);
+        border-top: 4px solid hsl(217, 91%, 60%);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        z-index: 9999;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: translate(-50%, -50%) rotate(0deg);
+        }
+        100% {
+          transform: translate(-50%, -50%) rotate(360deg);
+        }
+      }
+
+      /* Hide spinner when app is loaded */
+      .app-loaded .loading-spinner {
+        display: none;
+      }
+
+      /* Prevent any content from showing until CSS is fully loaded */
+      #root {
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+      }
+
+      .css-loaded #root {
+        opacity: 1;
+      }
+    </style>
+
+    <!-- Force CSS to load before JavaScript -->
+    <link
+      rel="preload"
+      href="/src/index.css"
+      as="style"
+      onload="this.onload=null;this.rel='stylesheet'"
+    />
+    <noscript><link rel="stylesheet" href="/src/index.css" /></noscript>
+
+    <meta
+      property="og:title"
+      content="HealthTracker Pro - Healthcare Care Adherence Platform"
+    />
+    <meta
+      property="og:description"
+      content="AI-powered healthcare SaaS platform for patient care management and adherence tracking"
+    />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <meta
+      property="og:image"
+      content="https://lovable.dev/opengraph-image-p98pqg.png"
+    />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@lovable_dev" />
-    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <meta
+      name="twitter:image"
+      content="https://lovable.dev/opengraph-image-p98pqg.png"
+    />
   </head>
-
   <body>
+    <!-- Inline script to prevent FOUC and ensure proper loading order -->
+    <script>
+      // Mark when CSS starts loading
+      document.documentElement.style.setProperty("--css-loading", "1");
+
+      // Function to check if stylesheets are loaded
+      function checkCSSLoaded() {
+        try {
+          const links = document.querySelectorAll('link[rel="stylesheet"]');
+          let allLoaded = true;
+
+          for (let link of links) {
+            if (!link.sheet || link.sheet.cssRules.length === 0) {
+              allLoaded = false;
+              break;
+            }
+          }
+
+          if (allLoaded) {
+            document.documentElement.style.setProperty("--css-loading", "0");
+            document.body.classList.add("css-loaded");
+          } else {
+            setTimeout(checkCSSLoaded, 10);
+          }
+        } catch (e) {
+          // Fallback - assume loaded after 500ms
+          setTimeout(() => {
+            document.documentElement.style.setProperty("--css-loading", "0");
+            document.body.classList.add("css-loaded");
+          }, 500);
+        }
+      }
+
+      // Start checking when DOM is ready
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", checkCSSLoaded);
+      } else {
+        checkCSSLoaded();
+      }
+    </script>
+
+    <!-- Loading spinner shown while app initializes -->
+    <div class="loading-spinner"></div>
+
+    <!-- React app root -->
     <div id="root"></div>
+
+    <!-- Load main script -->
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

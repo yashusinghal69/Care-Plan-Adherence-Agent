@@ -1,16 +1,32 @@
 {
   "rewrites": [
     {
-      "source": "/assets/(.*)",
-      "destination": "/assets/$1"
+      "source": "/agents/patient-care-agent/(.*)",
+      "destination": "/$1"
     },
     {
-      "source": "/images/(.*)",
-      "destination": "/images/$1"
-    },
-    {
-      "source": "/((?!api/).*)",
+      "source": "/agents/patient-care-agent",
       "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/favicon.(ico|svg)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400"
+        }
+      ]
+    },
+    {
+      "source": "/src/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
     }
   ]
 }
