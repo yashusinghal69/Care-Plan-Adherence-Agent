@@ -53,11 +53,7 @@ export function AdherenceAnalytics() {
       const mergedInput = `${patientId} ${patientName}`;
 
       // API Call to adherence analytics endpoint
-      const response = await apiCall("adherence-proxy", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+      const result = await apiCall('adherence-proxy', {
         body: JSON.stringify({
           input_value: mergedInput,
           output_type: "text",
@@ -65,47 +61,38 @@ export function AdherenceAnalytics() {
         }),
       });
 
-      if (response.ok) {
-        const result = await response.json();
-        console.log("Adherence response:", result);
+      console.log("Adherence response:", result);
 
-        // Parse the response text field
-        const responseText =
-          result.outputs?.[0]?.outputs?.[0]?.results?.message?.data?.text;
+      // Parse the response text field
+      const responseText =
+        result.outputs?.[0]?.outputs?.[0]?.results?.message?.data?.text;
 
-        if (responseText) {
-          const parsedData = JSON.parse(responseText);
-          setAdherenceData(parsedData);
+      if (responseText) {
+        const parsedData = JSON.parse(responseText);
+        setAdherenceData(parsedData);
 
-          // Show appropriate toast based on adherence rate
-          const rate =
-            parseInt(parsedData.adherence_rate.replace("%", "")) || 0;
+        // Show appropriate toast based on adherence rate
+        const rate =
+          parseInt(parsedData.adherence_rate.replace("%", "")) || 0;
 
-          if (rate < 50) {
-            toast.error("Critical: Patient requires immediate attention", {
-              description: "Medical team has been notified via Slack",
-              duration: 5000,
-            });
-          } else if (rate >= 50 && rate < 80) {
-            toast.warning("Warning: Patient adherence needs improvement", {
-              description: "Consider additional support measures",
-              duration: 4000,
-            });
-          } else {
-            toast.success("Excellent: Patient showing great adherence", {
-              description: "Treatment plan is being followed correctly",
-              duration: 4000,
-            });
-          }
+        if (rate < 50) {
+          toast.error("Critical: Patient requires immediate attention", {
+            description: "Medical team has been notified via Slack",
+            duration: 5000,
+          });
+        } else if (rate >= 50 && rate < 80) {
+          toast.warning("Warning: Patient adherence needs improvement", {
+            description: "Consider additional support measures",
+            duration: 4000,
+          });
         } else {
-          throw new Error("Invalid response format");
+          toast.success("Excellent: Patient showing great adherence", {
+            description: "Treatment plan is being followed correctly",
+            duration: 4000,
+          });
         }
       } else {
-        const errorText = await response.text();
-        console.error("Adherence error response:", errorText);
-        throw new Error(
-          `Failed to fetch adherence data: ${response.status} - ${errorText}`
-        );
+        throw new Error("Invalid response format");
       }
     } catch (error) {
       console.error("Adherence analytics error:", error);

@@ -129,11 +129,7 @@ export function PatientRegistration() {
         },
       };
 
-      const response = await apiCall("registration-proxy", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+      const response = await apiCall('registration-proxy', {
         body: JSON.stringify({
           input_value: JSON.stringify(patientData),
           output_type: "chat",
@@ -143,9 +139,8 @@ export function PatientRegistration() {
 
       console.log("Registration response status:", response.status);
 
-      if (response.ok) {
-        const result = await response.json();
-        console.log("Registration result:", result);
+      if (response) {
+        console.log("Registration result:", response);
         toast.success(
           "Patient registered successfully! Care plan has been created.",
           {
@@ -161,11 +156,7 @@ export function PatientRegistration() {
         setMedications([{ name: "", dosage: "", frequency: "" }]);
         setExercises([{ type: "", duration: "", timing: "" }]);
       } else {
-        const errorText = await response.text();
-        console.error("Registration error response:", errorText);
-        throw new Error(
-          `Failed to register patient: ${response.status} - ${errorText}`
-        );
+        throw new Error("Failed to register patient");
       }
     } catch (error) {
       console.error("Registration error:", error);
