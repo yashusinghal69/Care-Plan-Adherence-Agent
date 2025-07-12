@@ -52,7 +52,7 @@ export function ScheduleManagement() {
 
       // API Call to generate schedule
       const response = await fetch(
-        `http://localhost:3001/api/scheduler-proxy`,
+        `/api/scheduler-proxy`,
         {
           method: "POST",
           headers: {
