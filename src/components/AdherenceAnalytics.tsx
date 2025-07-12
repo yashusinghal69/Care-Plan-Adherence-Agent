@@ -50,6 +50,7 @@ export function AdherenceAnalytics() {
 
       if (response.ok) {
         const result = await response.json();
+        console.log('Adherence response:', result);
         
         // Parse the response text field
         const responseText = result.outputs?.[0]?.outputs?.[0]?.results?.message?.data?.text;
@@ -81,7 +82,9 @@ export function AdherenceAnalytics() {
           throw new Error("Invalid response format");
         }
       } else {
-        throw new Error("Failed to fetch adherence data");
+        const errorText = await response.text();
+        console.error('Adherence error response:', errorText);
+        throw new Error(`Failed to fetch adherence data: ${response.status} - ${errorText}`);
       }
     } catch (error) {
       console.error("Adherence analytics error:", error);

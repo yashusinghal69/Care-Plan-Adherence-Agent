@@ -143,7 +143,11 @@ export function PatientRegistration() {
         }
       );
 
+      console.log('Registration response status:', response.status);
+      
       if (response.ok) {
+        const result = await response.json();
+        console.log('Registration result:', result);
         toast.success(
           "Patient registered successfully! Care plan has been created.",
           {
@@ -159,7 +163,9 @@ export function PatientRegistration() {
         setMedications([{ name: "", dosage: "", frequency: "" }]);
         setExercises([{ type: "", duration: "", timing: "" }]);
       } else {
-        throw new Error("Failed to register patient");
+        const errorText = await response.text();
+        console.error('Registration error response:', errorText);
+        throw new Error(`Failed to register patient: ${response.status} - ${errorText}`);
       }
     } catch (error) {
       console.error("Registration error:", error);

@@ -68,6 +68,7 @@ export function ScheduleManagement() {
 
       if (response.ok) {
         const result = await response.json();
+        console.log('Schedule response:', result);
 
         // Parse the nested response structure
         const responseText =
@@ -88,7 +89,9 @@ export function ScheduleManagement() {
           throw new Error("Invalid response format");
         }
       } else {
-        throw new Error("Failed to generate schedule");
+        const errorText = await response.text();
+        console.error('Schedule error response:', errorText);
+        throw new Error(`Failed to generate schedule: ${response.status} - ${errorText}`);
       }
     } catch (error) {
       console.error("Schedule generation error:", error);
