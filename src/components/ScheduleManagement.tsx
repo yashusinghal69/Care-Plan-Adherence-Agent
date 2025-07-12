@@ -18,7 +18,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { toast } from "sonner";
-import { apiCall } from "@/lib/api";
+import { createApiUrl } from "@/lib/api";
 
 interface ScheduleItem {
   time: string;
@@ -52,33 +52,44 @@ export function ScheduleManagement() {
       const mergedInput = `${patientId} ${patientName}`;
 
       // API Call to generate schedule
-      const result = await apiCall('scheduler-proxy', {
-        body: JSON.stringify({
-          input_value: mergedInput,
-          output_type: "text",
-          input_type: "text",
-        }),
-      });
+      const response = await fetch(
+        createApiUrl(`/api/scheduler-proxy`),
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            input_value: mergedInput,
+            output_type: "text",
+            input_type: "text",
+          }),
+        }
+      );
 
-      console.log("Schedule response:", result);
+      if (response.ok) {
+        const result = await response.json();
 
-      // Parse the nested response structure
-      const responseText =
-        result.outputs?.[0]?.outputs?.[0]?.results?.message?.data?.text;
+        // Parse the nested response structure
+        const responseText =
+          result.outputs?.[0]?.outputs?.[0]?.results?.message?.data?.text;
 
-      if (responseText) {
-        const parsedData = JSON.parse(responseText);
-        setScheduleData(parsedData);
+        if (responseText) {
+          const parsedData = JSON.parse(responseText);
+          setScheduleData(parsedData);
 
-        toast.success(
-          "📅 Tasks successfully scheduled for Google Calendar!",
-          {
-            description: `Schedule created for ${parsedData.name}`,
-            duration: 4000,
-          }
-        );
+          toast.success(
+            "📅 Tasks successfully scheduled for Google Calendar!",
+            {
+              description: `Schedule created for ${parsedData.name}`,
+              duration: 4000,
+            }
+          );
+        } else {
+          throw new Error("Invalid response format");
+        }
       } else {
-        throw new Error("Invalid response format");
+        throw new Error("Failed to generate schedule");
       }
     } catch (error) {
       console.error("Schedule generation error:", error);

@@ -12,7 +12,7 @@
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
-    "postbuild": "node postbuild.js"
+    "postbuild": "node postbuild.js && node fix-api-urls.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

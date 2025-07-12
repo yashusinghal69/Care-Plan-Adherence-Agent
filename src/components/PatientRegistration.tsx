@@ -19,7 +19,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { toast } from "sonner";
-import { apiCall } from "@/lib/api";
+import { createApiUrl } from "@/lib/api";
 
 interface Medication {
   name: string;
@@ -129,18 +129,22 @@ export function PatientRegistration() {
         },
       };
 
-      const response = await apiCall('registration-proxy', {
-        body: JSON.stringify({
-          input_value: JSON.stringify(patientData),
-          output_type: "chat",
-          input_type: "text",
-        }),
-      });
+      const response = await fetch(
+        createApiUrl(`/api/registration-proxy`),
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            input_value: JSON.stringify(patientData),
+            output_type: "chat",
+            input_type: "text",
+          }),
+        }
+      );
 
-      console.log("Registration response status:", response.status);
-
-      if (response) {
-        console.log("Registration result:", response);
+      if (response.ok) {
         toast.success(
           "Patient registered successfully! Care plan has been created.",
           {

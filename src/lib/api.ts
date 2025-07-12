@@ -1,44 +1,39 @@
-// API utility for handling base path and requests
-const API_BASE_PATH = '/agents/patient-care-agent/api';
+// API utility functions for handling base URLs and API calls
 
-// Get the correct API URL based on environment
-export const getApiUrl = (endpoint: string): string => {
-  // Remove leading slash if present
-  const cleanEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
+// Get the base URL for API calls
+const getBaseUrl = () => {
+  // In development, use relative paths
+  if (import.meta.env.DEV) {
+    return '';
+  }
   
-  // Always use the full path since we're deploying to Vercel with base path
-  return `${API_BASE_PATH}/${cleanEndpoint}`;
+  // Check if VITE_BASE_URL is set and is not localhost
+  const envBaseUrl = import.meta.env.VITE_BASE_URL;
+  if (envBaseUrl && !envBaseUrl.includes('localhost')) {
+    return envBaseUrl;
+  }
+  
+  // In production, use the base path from Vite config
+  return '/agents/patient-care-agent';
 };
 
-// Wrapper function for API calls with proper error handling
+// Create API URL with proper base path
+export const createApiUrl = (endpoint: string) => {
+  const baseUrl = getBaseUrl();
+  return `${baseUrl}${endpoint}`;
+};
+
+// API call wrapper
 export const apiCall = async (endpoint: string, options: RequestInit = {}) => {
-  const url = getApiUrl(endpoint);
+  const url = createApiUrl(endpoint);
   
-  const defaultOptions: RequestInit = {
-    method: 'POST',
+  const response = await fetch(url, {
+    ...options,
     headers: {
       'Content-Type': 'application/json',
+      ...options.headers,
     },
-    ...options,
-  };
-
-  try {
-    console.log(`Making API call to: ${url}`);
-    const response = await fetch(url, defaultOptions);
-    
-    console.log(`Response status: ${response.status}`);
-    
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error(`API Error Response: ${errorText}`);
-      throw new Error(`API call failed: ${response.status} - ${errorText}`);
-    }
-    
-    const result = await response.json();
-    console.log('API Response:', result);
-    return result;
-  } catch (error) {
-    console.error(`API call error for ${url}:`, error);
-    throw error;
-  }
+  });
+  
+  return response;
 };

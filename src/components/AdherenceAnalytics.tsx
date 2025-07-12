@@ -1,28 +1,14 @@
 import { useState } from "react";
-import {
-  ChartBar,
-  Search,
-  AlertTriangle,
-  CheckCircle,
-  TrendingUp,
-  Activity,
-  Users,
-  Shield,
-} from "lucide-react";
+import { ChartBar, Search, AlertTriangle, CheckCircle, TrendingUp, Activity, Users, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
-import { apiCall } from "@/lib/api";
+import { createApiUrl } from "@/lib/api";
+ 
 
 interface AdherenceData {
   adherence_rate: string;
@@ -34,13 +20,11 @@ export function AdherenceAnalytics() {
   const [patientId, setPatientId] = useState("");
   const [patientName, setPatientName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [adherenceData, setAdherenceData] = useState<AdherenceData | null>(
-    null
-  );
+  const [adherenceData, setAdherenceData] = useState<AdherenceData | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+    
     if (!patientId || !patientName) {
       toast.error("Please enter both Patient ID and Patient Name");
       return;
@@ -53,46 +37,52 @@ export function AdherenceAnalytics() {
       const mergedInput = `${patientId} ${patientName}`;
 
       // API Call to adherence analytics endpoint
-      const result = await apiCall('adherence-proxy', {
+      const response = await fetch(createApiUrl(`/api/adherence-proxy`), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
         body: JSON.stringify({
           input_value: mergedInput,
           output_type: "text",
-          input_type: "text",
-        }),
+          input_type: "text"
+        })
       });
 
-      console.log("Adherence response:", result);
-
-      // Parse the response text field
-      const responseText =
-        result.outputs?.[0]?.outputs?.[0]?.results?.message?.data?.text;
-
-      if (responseText) {
-        const parsedData = JSON.parse(responseText);
-        setAdherenceData(parsedData);
-
-        // Show appropriate toast based on adherence rate
-        const rate =
-          parseInt(parsedData.adherence_rate.replace("%", "")) || 0;
-
-        if (rate < 50) {
-          toast.error("Critical: Patient requires immediate attention", {
-            description: "Medical team has been notified via Slack",
-            duration: 5000,
-          });
-        } else if (rate >= 50 && rate < 80) {
-          toast.warning("Warning: Patient adherence needs improvement", {
-            description: "Consider additional support measures",
-            duration: 4000,
-          });
+      if (response.ok) {
+        const result = await response.json();
+        
+        // Parse the response text field
+        const responseText = result.outputs?.[0]?.outputs?.[0]?.results?.message?.data?.text;
+        
+        if (responseText) {
+          const parsedData = JSON.parse(responseText);
+          setAdherenceData(parsedData);
+          
+          // Show appropriate toast based on adherence rate
+          const rate = parseInt(parsedData.adherence_rate.replace('%', '')) || 0;
+          
+          if (rate < 50) {
+            toast.error("Critical: Patient requires immediate attention", {
+              description: "Medical team has been notified via Slack",
+              duration: 5000
+            });
+          } else if (rate >= 50 && rate < 80) {
+            toast.warning("Warning: Patient adherence needs improvement", {
+              description: "Consider additional support measures",
+              duration: 4000
+            });
+          } else {
+            toast.success("Excellent: Patient showing great adherence", {
+              description: "Treatment plan is being followed correctly",
+              duration: 4000
+            });
+          }
         } else {
-          toast.success("Excellent: Patient showing great adherence", {
-            description: "Treatment plan is being followed correctly",
-            duration: 4000,
-          });
+          throw new Error("Invalid response format");
         }
       } else {
-        throw new Error("Invalid response format");
+        throw new Error("Failed to fetch adherence data");
       }
     } catch (error) {
       console.error("Adherence analytics error:", error);
@@ -110,7 +100,7 @@ export function AdherenceAnalytics() {
 
   const getAdherenceRate = () => {
     if (!adherenceData) return 0;
-    return parseInt(adherenceData.adherence_rate.replace("%", "")) || 0;
+    return parseInt(adherenceData.adherence_rate.replace('%', '')) || 0;
   };
 
   const getAdherenceColor = (rate: number) => {
@@ -130,12 +120,8 @@ export function AdherenceAnalytics() {
             <ChartBar className="h-6 w-6 text-success" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-foreground">
-              Adherence Analytics Dashboard
-            </h1>
-            <p className="text-muted-foreground">
-              Monitor patient compliance and generate actionable insights
-            </p>
+            <h1 className="text-2xl font-bold text-foreground">Adherence Analytics Dashboard</h1>
+            <p className="text-muted-foreground">Monitor patient compliance and generate actionable insights</p>
           </div>
         </div>
       </div>
@@ -150,9 +136,7 @@ export function AdherenceAnalytics() {
               </div>
               <div>
                 <div className="text-2xl font-bold text-foreground">1,247</div>
-                <div className="text-xs text-muted-foreground">
-                  Active Patients
-                </div>
+                <div className="text-xs text-muted-foreground">Active Patients</div>
               </div>
             </div>
           </CardContent>
@@ -166,9 +150,7 @@ export function AdherenceAnalytics() {
               </div>
               <div>
                 <div className="text-2xl font-bold text-foreground">87%</div>
-                <div className="text-xs text-muted-foreground">
-                  Overall Adherence
-                </div>
+                <div className="text-xs text-muted-foreground">Overall Adherence</div>
               </div>
             </div>
           </CardContent>
@@ -182,9 +164,7 @@ export function AdherenceAnalytics() {
               </div>
               <div>
                 <div className="text-2xl font-bold text-foreground">23</div>
-                <div className="text-xs text-muted-foreground">
-                  Alerts Today
-                </div>
+                <div className="text-xs text-muted-foreground">Alerts Today</div>
               </div>
             </div>
           </CardContent>
@@ -198,9 +178,7 @@ export function AdherenceAnalytics() {
               </div>
               <div>
                 <div className="text-2xl font-bold text-foreground">99.9%</div>
-                <div className="text-xs text-muted-foreground">
-                  System Uptime
-                </div>
+                <div className="text-xs text-muted-foreground">System Uptime</div>
               </div>
             </div>
           </CardContent>
@@ -214,9 +192,7 @@ export function AdherenceAnalytics() {
             <Search className="h-5 w-5 text-primary" />
             Patient Adherence Analysis
           </CardTitle>
-          <CardDescription>
-            Enter patient details to analyze their treatment adherence
-          </CardDescription>
+          <CardDescription>Enter patient details to analyze their treatment adherence</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -244,7 +220,7 @@ export function AdherenceAnalytics() {
                 />
               </div>
             </div>
-
+            
             <div className="flex gap-3 pt-4">
               <Button
                 type="submit"
@@ -263,7 +239,7 @@ export function AdherenceAnalytics() {
                   </>
                 )}
               </Button>
-
+              
               {adherenceData && (
                 <Button
                   type="button"
@@ -287,27 +263,23 @@ export function AdherenceAnalytics() {
             <Alert className="border-destructive/50 bg-destructive/5">
               <AlertTriangle className="h-4 w-4 text-destructive" />
               <AlertDescription className="text-destructive">
-                <strong>🚨 CRITICAL:</strong> Patient {patientName} has very low
-                adherence ({adherenceData.adherence_rate}). Medical team has
-                been notified via Slack.
+                <strong>🚨 CRITICAL:</strong> Patient {patientName} has very low adherence ({adherenceData.adherence_rate}). 
+                Medical team has been notified via Slack.
               </AlertDescription>
             </Alert>
           ) : adherenceRate < 80 ? (
             <Alert className="border-warning/50 bg-warning/5">
               <AlertTriangle className="h-4 w-4 text-warning" />
               <AlertDescription className="text-warning">
-                <strong>⚠️ WARNING:</strong> Patient {patientName} has moderate
-                adherence ({adherenceData.adherence_rate}). Consider additional
-                support measures.
+                <strong>⚠️ WARNING:</strong> Patient {patientName} has moderate adherence ({adherenceData.adherence_rate}). 
+                Consider additional support measures.
               </AlertDescription>
             </Alert>
           ) : (
             <Alert className="border-success/50 bg-success/5">
               <CheckCircle className="h-4 w-4 text-success" />
               <AlertDescription className="text-success">
-                <strong>✅ EXCELLENT:</strong> Patient {patientName} is
-                following most of their scheduled tasks (
-                {adherenceData.adherence_rate}).
+                <strong>✅ EXCELLENT:</strong> Patient {patientName} is following most of their scheduled tasks ({adherenceData.adherence_rate}).
               </AlertDescription>
             </Alert>
           )}
@@ -319,26 +291,21 @@ export function AdherenceAnalytics() {
                 <Activity className="h-5 w-5 text-accent" />
                 Detailed Adherence Report
               </CardTitle>
-              <CardDescription>
-                Comprehensive analysis for {patientName}
-              </CardDescription>
+              <CardDescription>Comprehensive analysis for {patientName}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               {/* Adherence Rate Display */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-foreground">
-                    Adherence Rate
-                  </span>
-                  <span
-                    className={`text-2xl font-bold ${getAdherenceColor(
-                      adherenceRate
-                    )}`}
-                  >
+                  <span className="text-sm font-medium text-foreground">Adherence Rate</span>
+                  <span className={`text-2xl font-bold ${getAdherenceColor(adherenceRate)}`}>
                     {adherenceData.adherence_rate}
                   </span>
                 </div>
-                <Progress value={adherenceRate} className="h-3" />
+                <Progress 
+                  value={adherenceRate} 
+                  className="h-3"
+                />
                 <div className="flex justify-between text-xs text-muted-foreground">
                   <span>Poor (0-59%)</span>
                   <span>Fair (60-79%)</span>
@@ -350,109 +317,75 @@ export function AdherenceAnalytics() {
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="p-4 bg-muted/30 border border-border rounded-lg">
                   <div className="flex items-center gap-2 mb-2">
-                    <div
-                      className={`w-3 h-3 rounded-full ${
-                        adherenceData.non_adherence_flag
-                          ? "bg-destructive"
-                          : "bg-success"
-                      }`}
-                    ></div>
-                    <span className="font-medium text-foreground">
-                      Adherence Status
-                    </span>
+                    <div className={`w-3 h-3 rounded-full ${adherenceData.non_adherence_flag ? 'bg-destructive' : 'bg-success'}`}></div>
+                    <span className="font-medium text-foreground">Adherence Status</span>
                   </div>
-                  <div
-                    className={`text-sm ${
-                      adherenceData.non_adherence_flag
-                        ? "text-destructive"
-                        : "text-success"
-                    }`}
-                  >
-                    {adherenceData.non_adherence_flag
-                      ? "Non-Adherent"
-                      : "Adherent"}
+                  <div className={`text-sm ${adherenceData.non_adherence_flag ? 'text-destructive' : 'text-success'}`}>
+                    {adherenceData.non_adherence_flag ? 'Non-Adherent' : 'Adherent'}
                   </div>
                 </div>
 
                 <div className="p-4 bg-muted/30 border border-border rounded-lg">
                   <div className="flex items-center gap-2 mb-2">
-                    <div
-                      className={`w-3 h-3 rounded-full ${
-                        adherenceData.follow_up_needed
-                          ? "bg-warning"
-                          : "bg-success"
-                      }`}
-                    ></div>
-                    <span className="font-medium text-foreground">
-                      Follow-up Required
-                    </span>
+                    <div className={`w-3 h-3 rounded-full ${adherenceData.follow_up_needed ? 'bg-warning' : 'bg-success'}`}></div>
+                    <span className="font-medium text-foreground">Follow-up Required</span>
                   </div>
-                  <div
-                    className={`text-sm ${
-                      adherenceData.follow_up_needed
-                        ? "text-warning"
-                        : "text-success"
-                    }`}
-                  >
-                    {adherenceData.follow_up_needed
-                      ? "Yes - Immediate"
-                      : "No - On Track"}
+                  <div className={`text-sm ${adherenceData.follow_up_needed ? 'text-warning' : 'text-success'}`}>
+                    {adherenceData.follow_up_needed ? 'Yes - Immediate' : 'No - On Track'}
                   </div>
                 </div>
               </div>
 
               {/* Action Items */}
               <div className="p-4 bg-accent/5 border border-accent/20 rounded-lg">
-                <h4 className="font-medium text-foreground mb-3">
-                  Recommended Actions
-                </h4>
+                <h4 className="font-medium text-foreground mb-3">Recommended Actions</h4>
                 <div className="space-y-2 text-sm">
-                  {adherenceRate < 50 ? (
-                    <>
-                      <div className="flex items-center gap-2 text-destructive">
-                        <AlertTriangle className="h-3 w-3" />
-                        <span>Schedule immediate consultation</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-destructive">
-                        <Activity className="h-3 w-3" />
-                        <span>Review medication schedule urgently</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-destructive">
-                        <Users className="h-3 w-3" />
-                        <span>Alert medical team via Slack</span>
-                      </div>
-                    </>
-                  ) : adherenceRate < 80 ? (
-                    <>
-                      <div className="flex items-center gap-2 text-warning">
-                        <AlertTriangle className="h-3 w-3" />
-                        <span>Monitor patient more closely</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-warning">
-                        <Activity className="h-3 w-3" />
-                        <span>Review treatment barriers</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-accent">
-                        <Users className="h-3 w-3" />
-                        <span>Increase patient support</span>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div className="flex items-center gap-2 text-success">
-                        <CheckCircle className="h-3 w-3" />
-                        <span>Continue current treatment plan</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-accent">
-                        <TrendingUp className="h-3 w-3" />
-                        <span>Monitor progress regularly</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-primary">
-                        <Activity className="h-3 w-3" />
-                        <span>Maintain positive reinforcement</span>
-                      </div>
-                    </>
-                  )}
+                {adherenceRate < 50 ? (
+                  <>
+                    <div className="flex items-center gap-2 text-destructive">
+                      <AlertTriangle className="h-3 w-3" />
+                      <span>Schedule immediate consultation</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-destructive">
+                      <Activity className="h-3 w-3" />
+                      <span>Review medication schedule urgently</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-destructive">
+                      <Users className="h-3 w-3" />
+                      <span>Alert medical team via Slack</span>
+                    </div>
+                  </>
+                ) : adherenceRate < 80 ? (
+                  <>
+                    <div className="flex items-center gap-2 text-warning">
+                      <AlertTriangle className="h-3 w-3" />
+                      <span>Monitor patient more closely</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-warning">
+                      <Activity className="h-3 w-3" />
+                      <span>Review treatment barriers</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-accent">
+                      <Users className="h-3 w-3" />
+                      <span>Increase patient support</span>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="flex items-center gap-2 text-success">
+                      <CheckCircle className="h-3 w-3" />
+                      <span>Continue current treatment plan</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-accent">
+                      <TrendingUp className="h-3 w-3" />
+                      <span>Monitor progress regularly</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-primary">
+                      <Activity className="h-3 w-3" />
+                      <span>Maintain positive reinforcement</span>
+                    </div>
+                  </>
+                )}
                 </div>
               </div>
             </CardContent>
@@ -469,9 +402,7 @@ export function AdherenceAnalytics() {
                 <ChartBar className="h-8 w-8 text-muted-foreground" />
               </div>
               <div>
-                <h3 className="font-medium text-foreground mb-2">
-                  How to Analyze Patient Adherence
-                </h3>
+                <h3 className="font-medium text-foreground mb-2">How to Analyze Patient Adherence</h3>
                 <div className="text-sm text-muted-foreground space-y-1">
                   <p>1. Enter the patient's ID (e.g., p_1001)</p>
                   <p>2. Enter the patient's full name</p>
