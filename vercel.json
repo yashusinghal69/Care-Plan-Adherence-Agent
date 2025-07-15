@@ -4,14 +4,15 @@
       "includeFiles": "api/*.js"
     }
   },
+
   "rewrites": [
     {
       "source": "/agents/patient-care-agent/api/(.*)",
-      "destination": "/api/$1"
+      "destination": "https://agents.raga.ai/agents/patient-care-agent/api/$1"
     },
     {
       "source": "/api/(.*)",
-      "destination": "/api/$1"
+      "destination": "https://agents.raga.ai/agents/patient-care-agent/api/$1"
     },
     {
       "source": "/agents/patient-care-agent/(.*)",
@@ -20,6 +21,14 @@
     {
       "source": "/agents/patient-care-agent",
       "destination": "/index.html"
+    },
+     {
+      "source": "/agents/patient-discharge-agent/(.*)",
+      "destination": "https://patient-discharge-agent-jdifh4o8n-aadarsh-nagraths-projects.vercel.app/agents/patient-discharge-agent/$1"
+    },
+    {
+      "source": "/agents/clinical-trial-agent/(.*)",
+      "destination": "https://clinical-trial-agent.onrender.com/$1"
     }
   ],
   "headers": [
