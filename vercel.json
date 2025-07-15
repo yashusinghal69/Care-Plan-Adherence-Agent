@@ -7,22 +7,14 @@
 
   "rewrites": [
     {
-      "source": "/agents/patient-care-agent/api/(.*)",
-      "destination": "https://agents.raga.ai/agents/patient-care-agent/api/$1"
-    },
-    {
-      "source": "/api/(.*)",
-      "destination": "https://agents.raga.ai/agents/patient-care-agent/api/$1"
-    },
-    {
-      "source": "/agents/patient-care-agent/(.*)",
+      "source": "/agents/patient-care-agent/((?!api/).*))",
       "destination": "/$1"
     },
     {
       "source": "/agents/patient-care-agent",
       "destination": "/index.html"
     },
-     {
+    {
       "source": "/agents/patient-discharge-agent/(.*)",
       "destination": "https://patient-discharge-agent-nu.vercel.app/$1"
     },
