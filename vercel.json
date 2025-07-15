@@ -19,16 +19,28 @@
       "destination": "/index.html"
     },
     {
-      "source": "/agents/patient-discharge-agent/(.*)",
-      "destination": "https://patient-discharge-agent-nu.vercel.app/$1"
+      "source": "/agents/patient-discharge-agent",
+      "destination": "https://patient-discharge-agent-nu.vercel.app/agents/patient-discharge-agent"
     },
     {
-  "source": "/agents/clinical-coder-agent/:path*",
-  "destination": "https://clinical-coder-agent-six.vercel.app/agents/clinical-coder-agent/:path*"
+      "source": "/agents/patient-discharge-agent/(.*)",
+      "destination": "https://patient-discharge-agent-nu.vercel.app/agents/patient-discharge-agent/$1"
+    },
+    {
+      "source": "/agents/clinical-trial-agent",
+      "destination": "https://clinical-trial-agent-chi.vercel.app/agents/clinical-trial-agent"
+    },
+    {
+      "source": "/agents/clinical-trial-agent/(.*)",
+      "destination": "https://clinical-trial-agent-chi.vercel.app/agents/clinical-trial-agent/$1"
+    },
+    {
+      "source": "/agents/clinical-coder-agent",
+      "destination": "https://clinical-coder-agent-six.vercel.app/agents/clinical-coder-agent"
     },
     {
       "source": "/agents/clinical-coder-agent/(.*)",
-      "destination": "https://clinical-coder-agent-six.vercel.app/$1"
+      "destination": "https://clinical-coder-agent-six.vercel.app/agents/clinical-coder-agent/$1"
     }
   ],
   "headers": [
