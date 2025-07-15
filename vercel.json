@@ -7,7 +7,7 @@
 
   "rewrites": [
     {
-      "source": "/agents/patient-care-agent/((?!api/).*))",
+      "source": "/agents/patient-care-agent/((?!api/).*)",
       "destination": "/$1"
     },
     {
