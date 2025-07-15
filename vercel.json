@@ -24,7 +24,7 @@
     },
      {
       "source": "/agents/patient-discharge-agent/(.*)",
-      "destination": "https://patient-discharge-agent-jdifh4o8n-aadarsh-nagraths-projects.vercel.app/agents/patient-discharge-agent/$1"
+      "destination": "https://patient-discharge-agent-nu.vercel.app/$1"
     },
     {
       "source": "/agents/clinical-trial-agent/(.*)",
