@@ -25,26 +25,29 @@ if ! docker info > /dev/null 2>&1; then
     exit 1
 fi
 
-echo "🔨 Building Docker image..."
-docker build -t care-plan-agent .
+echo "🔨 Building and starting the application..."
 
 if [ $? -eq 0 ]; then
-    echo "✅ Docker image built successfully!"
-    echo ""
     echo "🚀 Starting the application..."
     echo "📍 Application will be available at: http://localhost:3000/agents/patient-care-agent/"
     echo "📍 Health check at: http://localhost:3000/health"
+    echo "📍 Frontend and Backend run together in one container"
+    echo "📍 Server.js handles both static files and API proxies"
     echo ""
     echo "🛑 To stop the application, press Ctrl+C"
     echo ""
     
     # Start with docker-compose for better management
     if [ -f docker-compose.yml ]; then
-        docker-compose up
+        echo "📦 Using Docker Compose for deployment..."
+        docker-compose down 2>/dev/null  # Clean up any existing containers
+        docker-compose up --build --remove-orphans
     else
+        echo "🐳 Using direct Docker run..."
+        docker build -t care-plan-agent .
         docker run -p 3000:3000 --env-file .env care-plan-agent
     fi
 else
-    echo "❌ Failed to build Docker image"
+    echo "❌ Failed to start application"
     exit 1
 fi

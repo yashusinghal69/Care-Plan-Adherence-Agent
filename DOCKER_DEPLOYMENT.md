@@ -1,12 +1,135 @@
-# 🐳 Docker Deployment Guide
+# Care Plan Adherence Agent - Docker Deployment Guide
 
-This guide explains how to deploy the Care Plan Adherence Agent using Docker.
+This project is a full-stack application with React frontend and Node.js/Express backend deployed in a **single Docker container**. The server serves both the built React app and the API endpoints.
 
-## 📋 Prerequisites
+## 🚀 Quick Start
 
-- Docker (version 20.10+)
-- Docker Compose (version 2.0+)
-- Your Langflow API credentials
+### Prerequisites
+
+- Docker and Docker Compose installed
+- Node.js 20+ (for local development)
+- A `.env` file with your Langflow configuration
+
+### Environment Setup
+
+1. Copy the environment template:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+2. Fill in your Langflow configuration in `.env`:
+   ```env
+   VITE_BASE_DEPLOYED_URL=https://your-langflow-deployment.com
+   VITE_LANGFLOW_FLOW_ADHERENCE_ID=your-adherence-flow-id
+   VITE_LANGFLOW_REGISTRATION_ID=your-registration-flow-id
+   VITE_LANGFLOW_FLOW_SCHEDULER_ID=your-scheduler-flow-id
+   ```
+
+## 🐳 Docker Deployment Options
+
+### Option 1: Production Deployment (Recommended)
+
+```bash
+# Build and start production container
+docker-compose up --build
+
+# Or use the helper script
+.\docker-helper.ps1 prod
+```
+
+The application will be available at:
+
+- **Frontend & API**: http://localhost:3000/agents/patient-care-agent/
+- **Health Check**: http://localhost:3000/health
+
+### Option 2: Development with Hot Reload
+
+```bash
+# Start development environment
+docker-compose -f docker-compose.dev.yml up --build
+
+# Or use the helper script
+.\docker-helper.ps1 dev
+```
+
+Development ports:
+
+- **Backend**: http://localhost:3000
+- **Frontend (Vite)**: http://localhost:5173
+
+## �️ Helper Scripts
+
+### PowerShell Script (Recommended for Windows)
+
+```powershell
+# Available commands
+.\docker-helper.ps1 dev         # Development environment
+.\docker-helper.ps1 prod        # Production environment
+.\docker-helper.ps1 build       # Build production image
+.\docker-helper.ps1 stop        # Stop all containers
+.\docker-helper.ps1 logs        # View logs
+.\docker-helper.ps1 status      # Container status
+.\docker-helper.ps1 clean       # Clean Docker resources
+.\docker-helper.ps1 reset       # Reset everything
+```
+
+### NPM Scripts
+
+```bash
+# Production
+npm run docker:up              # Start production
+npm run docker:build           # Build production image
+
+# Development
+npm run docker:up:dev          # Start development
+
+# Management
+npm run docker:down            # Stop containers
+npm run docker:logs           # View logs
+npm run docker:clean          # Clean resources
+```
+
+## 📁 Container Architecture
+
+### Single Container Design
+
+The application uses a **single Docker container** that:
+
+1. **Build Stage**:
+
+   - Installs dependencies
+   - Builds the React frontend (`npm run build`)
+   - Creates optimized production assets
+
+2. **Production Stage**:
+   - Serves built React app as static files
+   - Runs Express.js server for API endpoints
+   - Handles routing for SPA (Single Page Application)
+
+### File Structure in Container
+
+```
+/app/
+├── dist/           # Built React application
+├── server.js       # Express server (serves both frontend & API)
+├── node_modules/   # Production dependencies only
+├── logs/           # Application logs
+└── tmp/           # Temporary files
+```
+
+## 🔧 Configuration
+
+### Environment Variables
+
+| Variable                          | Description          | Default      |
+| --------------------------------- | -------------------- | ------------ |
+| `NODE_ENV`                        | Environment mode     | `production` |
+| `PORT`                            | Server port          | `3000`       |
+| `VITE_BASE_DEPLOYED_URL`          | Langflow base URL    | Required     |
+| `VITE_LANGFLOW_FLOW_ADHERENCE_ID` | Adherence flow ID    | Required     |
+| `VITE_LANGFLOW_REGISTRATION_ID`   | Registration flow ID | Required     |
+| `VITE_LANGFLOW_FLOW_SCHEDULER_ID` | Scheduler flow ID    | Required     |
 
 ## 🚀 Quick Deployment
 

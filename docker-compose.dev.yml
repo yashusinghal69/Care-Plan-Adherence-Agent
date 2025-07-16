@@ -1,21 +1,26 @@
 version: "3.8"
 
 services:
+  # Development service - Single container with hot reload
   care-plan-agent-dev:
     build:
       context: .
       dockerfile: Dockerfile
+      target: builder # Use builder stage for development
+    container_name: care-plan-agent-dev
     ports:
-      - "3000:3000"
+      - "3000:3000" # Backend server
+      - "5173:5173" # Vite dev server
     environment:
       - NODE_ENV=development
       - PORT=3000
     env_file:
       - .env
     volumes:
-      # Mount source code for development (optional - for live reload)
-      - ./src:/app/src:ro
-      - ./public:/app/public:ro
+      # Mount source code for hot reload
+      - .:/app
+      - /app/node_modules # Prevent overwriting node_modules
+      - dev_logs:/app/logs
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
@@ -23,4 +28,68 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
-    command: ["npm", "run", "start"]
+    command: ["npm", "run", "dev:full"]
+    networks:
+      - care-plan-dev-network
+    labels:
+      - "com.care-plan-agent.description=Care Plan Adherence Agent - Development"
+      - "com.care-plan-agent.version=dev"
+      - "com.care-plan-agent.type=development"
+
+  # Alternative: Separate development containers (if needed)
+  care-plan-backend-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    container_name: care-plan-backend-dev
+    ports:
+      - "3001:3000"
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+      - /app/node_modules
+    networks:
+      - care-plan-dev-network
+    command: npm run server
+    profiles:
+      - separate-services
+    labels:
+      - "com.care-plan-agent.component=backend"
+
+  care-plan-frontend-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    container_name: care-plan-frontend-dev
+    ports:
+      - "5173:5173"
+    environment:
+      - NODE_ENV=development
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+      - /app/node_modules
+    networks:
+      - care-plan-dev-network
+    command: npm run dev
+    profiles:
+      - separate-services
+    labels:
+      - "com.care-plan-agent.component=frontend"
+
+# Development networks
+networks:
+  care-plan-dev-network:
+    driver: bridge
+
+# Development volumes
+volumes:
+  dev_logs:
+    driver: local

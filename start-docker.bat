@@ -24,27 +24,30 @@ if errorlevel 1 (
     exit /b 1
 )
 
-echo 🔨 Building Docker image...
-docker build -t care-plan-agent .
+echo 🔨 Building and starting the application...
 
-if %errorlevel% equ 0 (
-    echo ✅ Docker image built successfully!
-    echo.
-    echo 🚀 Starting the application...
-    echo 📍 Application will be available at: http://localhost:3000/agents/patient-care-agent/
-    echo 📍 Health check at: http://localhost:3000/health
-    echo.
-    echo 🛑 To stop the application, press Ctrl+C
-    echo.
-    
-    REM Start with docker-compose for better management
-    if exist docker-compose.yml (
-        docker-compose up
-    ) else (
-        docker run -p 3000:3000 --env-file .env care-plan-agent
-    )
+echo 🚀 Starting the application...
+echo 📍 Application will be available at: http://localhost:3000/agents/patient-care-agent/
+echo 📍 Health check at: http://localhost:3000/health
+echo 📍 Frontend and Backend run together in one container
+echo 📍 Server.js handles both static files and API proxies
+echo.
+echo 🛑 To stop the application, press Ctrl+C
+echo.
+
+REM Start with docker-compose for better management
+if exist docker-compose.yml (
+    echo 📦 Using Docker Compose for deployment...
+    docker-compose down >nul 2>&1
+    docker-compose up --build --remove-orphans
 ) else (
-    echo ❌ Failed to build Docker image
-    pause
-    exit /b 1
+    echo 🐳 Using direct Docker run...
+    docker build -t care-plan-agent .
+    if %errorlevel% equ 0 (
+        docker run -p 3000:3000 --env-file .env care-plan-agent
+    ) else (
+        echo ❌ Failed to build Docker image
+        pause
+        exit /b 1
+    )
 )

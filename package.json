@@ -5,7 +5,6 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:vercel": "vercel dev",
     "server": "node server.js",
     "start": "node server.js",
     "dev:full": "concurrently \"npm run server\" \"npm run dev\"",
@@ -13,7 +12,19 @@
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
-    "postbuild": "node postbuild.js && node fix-api-urls.js"
+    "docker:build": "docker build -t care-plan-agent .",
+    "docker:build:dev": "docker build -t care-plan-agent:dev --target builder .",
+    "docker:run": "docker run -p 3000:3000 --env-file .env care-plan-agent",
+    "docker:run:dev": "docker run -p 3000:3000 -p 5173:5173 --env-file .env -v \"$(pwd):/app\" -v /app/node_modules care-plan-agent:dev",
+    "docker:up": "docker-compose up --build",
+    "docker:up:dev": "docker-compose -f docker-compose.dev.yml up --build",
+    "docker:up:separate": "docker-compose -f docker-compose.dev.yml --profile separate-services up --build",
+    "docker:down": "docker-compose down",
+    "docker:down:dev": "docker-compose -f docker-compose.dev.yml down",
+    "docker:logs": "docker-compose logs -f care-plan-agent",
+    "docker:logs:dev": "docker-compose -f docker-compose.dev.yml logs -f care-plan-agent-dev",
+    "docker:clean": "docker system prune -f && docker volume prune -f",
+    "docker:reset": "docker-compose down -v --remove-orphans && docker system prune -af"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
